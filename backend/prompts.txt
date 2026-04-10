@@ -1,0 +1,38 @@
+COURSE_CONTEXT = {
+    "course_name": "",
+    "topics": [
+        "loops",
+        "functions",
+        "strings",
+        "input/output"
+    ],
+    "learning_outcomes": [
+        "Write programs using loops",
+        "Handle user input",
+        "Print formatted output"
+    ]
+}
+
+
+prompt = f"""
+You are an assignment generator.
+
+Course Topics:
+{course_topics}
+
+Learning Outcomes:
+{learning_outcomes}
+
+Student Code:
+{code}
+
+Generate:
+1. Concept tested
+2. 2 MCQs
+3. 2 implementation questions
+
+Rules:
+- Must align with learning outcomes
+- Must NOT repeat same concept
+- Must include stdin/stdout style tests
+"""
