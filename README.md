@@ -84,25 +84,3 @@ Secure execution environments
 Integration of AI/LLMs into real-world applications
 
 
-
-## 📸 Screenshots
-
-### 🏠 Main Interface
-<p align="center">
-  <img src="images/main.png" width="700"/>
-</p>
-
-### 🧠 Question Generation
-<p align="center">
-  <img src="images/questions.png" width="700"/>
-</p>
-
-### 📚 Additional Questions
-<p align="center">
-  <img src="images/more_questions.png" width="700"/>
-</p>
-
-### 🧪 Test Execution
-<p align="center">
-  <img src="images/score.png" width="700"/>
-</p>
