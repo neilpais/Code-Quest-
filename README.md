@@ -28,8 +28,11 @@ Code Quest is an AI-powered full-stack application that analyzes user-submitted 
 
 ## 📁 Project Structure
 backend/ # FastAPI backend
+
 frontend/ # Next.js frontend
+
 sandbox/ # Code execution environment
+
 requirements.txt
 
 
