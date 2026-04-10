@@ -86,5 +86,3 @@ Scalable backend system design
 Secure execution environments
 Integration of AI/LLMs into real-world applications
 
-
-<img width="1846" height="924" alt="image" src="https://github.com/user-attachments/assets/f5b60dd6-f439-46a7-a0bc-290f5481959e" />
