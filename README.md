@@ -27,11 +27,13 @@ Code Quest is an AI-powered full-stack application that analyzes user-submitted 
 ---
 
 ## 📁 Project Structure
-backend/ # FastAPI backend
-frontend/ # Next.js frontend
-sandbox/ # Code execution environment
-requirements.txt
 
+```
+backend/    # FastAPI backend
+frontend/   # Next.js frontend
+sandbox/    # Code execution environment
+requirements.txt
+```
 
 ---
 
@@ -42,46 +44,72 @@ requirements.txt
 ```bash
 git clone https://github.com/neilpais/Code-Quest-.git
 cd Code-Quest-
+```
+
+### 2. Set up the backend
+
+```bash
 cd backend
 python3 -m venv venv
 source venv/bin/activate
 pip install -r ../requirements.txt
+```
 
-Create a .env file inside the backend/ directory:
+Create a `.env` file inside the `backend/` directory:
 
+```
 OPENAI_API_KEY=your_api_key_here
+```
 
-Setup backend: uvicorn main:app --reload
-Steup frontend:
+### 3. Run the backend
+
+```bash
+uvicorn main:app --reload
+```
+
+### 4. Set up and run the frontend
+
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
-Get the redis server up and running:
+### 5. Start Redis and the worker
+
+```bash
 redis-server
 rq worker sandbox
+```
 
-🚀 Future Improvements
-Multi-language support (C/C++)
-Enhanced test case generation
-User authentication and dashboards
-Adaptive learning paths based on performance
+---
 
-👨‍💻 Author
+## 🚀 Future Improvements
 
-Neil Allister Pais
+- Multi-language support (C/C++)
+- Enhanced test case generation
+- User authentication and dashboards
+- Adaptive learning paths based on performance
 
-GitHub: https://github.com/neilpais
-LinkedIn: https://linkedin.com/in/neil-allister-pais
+---
 
-📌 Notes
+## 👨‍💻 Author
+
+**Neil Allister Pais**
+
+- GitHub: [github.com/neilpais](https://github.com/neilpais)
+- LinkedIn: [linkedin.com/in/neil-allister-pais](https://linkedin.com/in/neil-allister-pais)
+
+---
+
+## 📌 Notes
 
 This project demonstrates:
 
-Full-stack application development
-Scalable backend system design
-Secure execution environments
-Integration of AI/LLMs into real-world applications
+- Full-stack application development
+- Scalable backend system design
+- Secure execution environments
+- Integration of AI/LLMs into real-world applications
 
 ---
 
@@ -89,20 +117,28 @@ Integration of AI/LLMs into real-world applications
 
 ### 🏠 Main Interface
 <p align="center">
-  <img src="images/main.png" width="700"/>
+  <img src="https://raw.githubusercontent.com/neilpais/Code-Quest-/main/images/main.png" width="700"/>
+  <br/>
+  <em>Landing page for uploading and analyzing code</em>
 </p>
 
 ### 🧠 Question Generation
 <p align="center">
-  <img src="images/questions.png" width="700"/>
+  <img src="https://raw.githubusercontent.com/neilpais/Code-Quest-/main/images/questions.png" width="700"/>
+  <br/>
+  <em>AI-generated conceptual and implementation questions</em>
 </p>
 
 ### 📚 Additional Questions
 <p align="center">
-  <img src="images/more_questions.png" width="700"/>
+  <img src="https://raw.githubusercontent.com/neilpais/Code-Quest-/main/images/more_questions.png" width="700"/>
+  <br/>
+  <em>Extended question set for deeper learning</em>
 </p>
 
 ### 🧪 Test Execution
 <p align="center">
-  <img src="images/score.png" width="700"/>
+  <img src="https://raw.githubusercontent.com/neilpais/Code-Quest-/main/images/score.png" width="700"/>
+  <br/>
+  <em>Automated test case execution and validation</em>
 </p>
