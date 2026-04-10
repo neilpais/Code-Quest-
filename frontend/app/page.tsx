@@ -91,7 +91,7 @@ export default function Page() {
           textShadow: "0 2px 10px rgba(34,197,94,0.5)",
         }}
       >
-        🎮 Reflection Quest
+        🎮 Code Quest
       </h1>
 
       <div style={{ textAlign: "center", marginBottom: "20px" }}>
