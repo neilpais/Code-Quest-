@@ -61,8 +61,7 @@ STEP 3: Pedagogical reasoning:
 STRICT REQUIREMENTS:
 
 - Generate EXACTLY 6 questions:
-  → 3 "general_programming" (multiple choice)
-  → 3 "code_specific" (implementation)
+  → 6 "general_programming" (multiple choice)
 
 - DO NOT use any other types (NO reflection, concept_gap, etc.)
 
@@ -74,15 +73,6 @@ RULES FOR MULTIPLE CHOICE:
 - Only ONE correct answer
 - Include "correct_answer" as "A", "B", "C", or "D"
 - Questions MUST be based on the student's code
-
-----------------------------------------
-
-RULES FOR CODE-SPECIFIC:
-
-- Include 3–5 test cases
-- Each test must have:
-  - "input"
-  - "expected"
 
 ----------------------------------------
 
@@ -111,17 +101,7 @@ RETURN ONLY VALID JSON IN THIS FORMAT:
       "question": "...",
       "options": ["A) ...", "B) ...", "C) ...", "D) ..."],
       "correct_answer": "A"
-    }},
-    {{
-      "type": "code_specific",
-      "question": "...",
-      "implementation_task": "...",
-      "tests": [
-        {{"input": "...", "expected": "..."}}
-      ]
     }}
-  ]
-}}
 """
 
     try:

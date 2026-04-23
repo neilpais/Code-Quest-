@@ -1,39 +1,45 @@
-import subprocess
-import tempfile
+import os
+from dotenv import load_dotenv
+from openai import OpenAI
 
-def run_code(code, input_data):
+load_dotenv()
 
-    with tempfile.TemporaryDirectory() as tmpdir:
+api_key = os.environ.get("OPENAI_API_KEY")
+if not api_key:
+    raise EnvironmentError("OPENAI_API_KEY not set")
 
-        source = f"{tmpdir}/main.c"
-        binary = f"{tmpdir}/main"
+client = OpenAI(api_key=api_key)
 
-        with open(source,"w") as f:
-            f.write(code)
 
-        # compile
-        compile_proc = subprocess.run(
-            ["gcc", source, "-o", binary],
-            capture_output=True,
-            text=True
+def run_code(code: str, input_data: str) -> dict:
+    system_prompt = (
+        "You are a C interpreter. Compile and run the given C program. "
+        "If there is a compilation error, start your reply with 'Compilation error:'. "
+        "Respond only with the program output."
+    )
+
+    user_prompt = (
+        f"Here is a C program:\n{code}\n\n"
+        f"Here is the input:\n{input_data}\n\n"
+        "Run the program and return only the output."
+    )
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0,
         )
 
-        if compile_proc.returncode != 0:
-            return {"output":"", "error":compile_proc.stderr}
+        answer = response.choices[0].message.content.strip()
 
-        try:
-            run_proc = subprocess.run(
-                [binary],
-                input=str(input_data),
-                capture_output=True,
-                text=True,
-                timeout=2
-            )
+        if answer.lower().startswith("compilation error"):
+            return {"output": "", "error": answer}
 
-            return {
-                "output": run_proc.stdout.strip(),
-                "error": run_proc.stderr.strip()
-            }
+        return {"output": answer, "error": ""}
 
-        except subprocess.TimeoutExpired:
-            return {"output":"", "error":"Timeout"}
+    except Exception as exc:
+        return {"output": "", "error": f"OpenAI API call failed: {exc}"}

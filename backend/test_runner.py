@@ -1,60 +1,84 @@
-import subprocess
 import os
+import re
+from code_runner import run_code
 
-TIMEOUT = 3
+
+def normalize_output(text: str) -> str:
+    if text is None:
+        return ""
+
+    text = text.strip()
+
+    # collapse repeated whitespace
+    text = re.sub(r"\s+", " ", text)
+
+    return text
+
+
+def outputs_match(expected: str, actual: str) -> bool:
+    expected_norm = normalize_output(expected)
+    actual_norm = normalize_output(actual)
+
+    # exact normalized match
+    if expected_norm == actual_norm:
+        return True
+
+    # case-insensitive match
+    if expected_norm.lower() == actual_norm.lower():
+        return True
+
+    # numeric equivalence: 5 == 5.0
+    try:
+        if float(expected_norm) == float(actual_norm):
+            return True
+    except Exception:
+        pass
+
+    return False
 
 
 def run_tests(file_path, tests):
+    if not os.path.exists(file_path):
+        return {"status": "error", "error": f"File {file_path} does not exist"}
+
     try:
-        executable = file_path.replace(".c", "")
+        with open(file_path, "r") as f:
+            code = f.read()
+    except Exception as exc:
+        return {"status": "error", "error": f"Could not read file: {exc}"}
 
-        # Compile
-        compile_proc = subprocess.run(
-            ["gcc", file_path, "-o", executable],
-            capture_output=True,
-            text=True
-        )
+    results = []
 
-        if compile_proc.returncode != 0:
-            return {
-                "status": "compile_error",
-                "error": compile_proc.stderr
-            }
+    for test in tests:
+        input_data = test.get("input", "")
+        expected = test.get("expected", "")
 
-        results = []
+        execution = run_code(code, input_data)
 
-        for test in tests:
-            try:
-                run_proc = subprocess.run(
-                    [executable],
-                    input=test.get("input", ""),
-                    capture_output=True,
-                    text=True,
-                    timeout=TIMEOUT
-                )
+        raw_output = execution.get("output", "")
+        error = execution.get("error", "").strip()
 
-                output = run_proc.stdout.strip()
+        output = raw_output.strip()
+        display_output = output if output else "(no output)"
 
-                results.append({
-                    "input": test.get("input", ""),
-                    "expected": test.get("expected", ""),
-                    "output": output,
-                    "passed": output == test.get("expected", "")
-                })
+        passed = (expected == "") or outputs_match(expected, output)
 
-            except subprocess.TimeoutExpired:
-                results.append({
-                    "input": test.get("input", ""),
-                    "error": "Timeout"
-                })
-
-        return {
-            "status": "completed",
-            "results": results
+        result = {
+            "input": input_data,
+            "expected": expected,
+            "output": display_output,
+            "passed": passed,
         }
 
-    except Exception as e:
-        return {
-            "status": "error",
-            "error": str(e)
-        }
+        if error:
+            result["error"] = error
+
+        results.append(result)
+
+    overall_correct = all(r.get("passed", False) for r in results)
+
+    return {
+        "status": "completed",
+        "correct": overall_correct,
+        "results": results
+    }
