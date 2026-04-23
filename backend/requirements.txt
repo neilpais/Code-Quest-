@@ -6,4 +6,4 @@ pydantic
 sqlalchemy
 psycopg2-binary
 asyncpg
-pyhton-multipart
+python-multipart
