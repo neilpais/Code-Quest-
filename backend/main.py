@@ -1,11 +1,7 @@
-from fastapi import UploadFile, File, Depends, FastAPI
-from models import Submission, Base
-from database import SessionLocal, engine
-from sqlalchemy.orm import Session
+from fastapi import UploadFile, File, FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from code_analysis import analyze_code
-import json
 import os
 
 UPLOAD_DIR = "uploads"
@@ -16,15 +12,14 @@ app = FastAPI()
 # ✅ CORS (required for Vercel frontend)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # change later to your Vercel URL
+    allow_origins=["*"],  # you can restrict later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# DB setup
-Base.metadata.create_all(bind=engine)
-
+# ✅ Simple in-memory storage (temporary)
+submissions_store = {}
 
 # ✅ Request model for MCQ
 class MCQSubmission(BaseModel):
@@ -33,23 +28,15 @@ class MCQSubmission(BaseModel):
     selected_option: str
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-
 # ✅ Health check
 @app.get("/")
 def home():
     return {"message": "MCQ API running 🚀"}
 
 
-# ✅ Generate MCQs
+# ✅ Generate MCQs (NO DB)
 @app.post("/analyze")
-def analyze(file: UploadFile = File(...), db: Session = Depends(get_db)):
+def analyze(file: UploadFile = File(...)):
     if not file.filename.endswith(".c"):
         return {"error": "Only .c files allowed"}
 
@@ -57,34 +44,23 @@ def analyze(file: UploadFile = File(...), db: Session = Depends(get_db)):
 
     result = analyze_code(code, assignment="A1")
 
-    # IMPORTANT: make sure result["questions"] ONLY contains MCQs
-    new_submission = Submission(
-        code=code,
-        concept=json.dumps(result.get("concept_analysis", {})),
-        questions=json.dumps(result["questions"])
-    )
-
-    db.add(new_submission)
-    db.commit()
-    db.refresh(new_submission)
+    # store questions in memory
+    submission_id = len(submissions_store) + 1
+    submissions_store[submission_id] = result["questions"]
 
     return {
         "questions": result["questions"],
-        "submission_id": new_submission.id
+        "submission_id": submission_id
     }
 
 
-# ✅ Submit MCQ answer
+# ✅ Submit MCQ answer (NO DB)
 @app.post("/submit-mcq")
-def submit_mcq(answer: MCQSubmission, db: Session = Depends(get_db)):
-    submission = db.query(Submission).filter(
-        Submission.id == answer.submission_id
-    ).first()
+def submit_mcq(answer: MCQSubmission):
+    questions = submissions_store.get(answer.submission_id)
 
-    if not submission:
+    if not questions:
         return {"error": "Submission not found"}
-
-    questions = json.loads(submission.questions)
 
     if answer.question_index < 0 or answer.question_index >= len(questions):
         return {"error": "Invalid question index"}
